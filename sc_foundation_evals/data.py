@@ -6,7 +6,6 @@ import scanpy as sc
 from typing import List, Optional, Union, Dict, Literal
 
 import numpy as np
-from scgpt.preprocess import Preprocessor
 
 from .helpers.custom_logging import log
 
@@ -214,6 +213,7 @@ class InputData():
         log.info(msg)
 
         # Preprocess the data following the scGPT data pre-processing pipeline
+        from scgpt.preprocess import Preprocessor
         preprocessor = Preprocessor(
             # the key in adata.layers to use as raw data
             use_key = input_key,  
