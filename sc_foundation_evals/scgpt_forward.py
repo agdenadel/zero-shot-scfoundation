@@ -17,12 +17,7 @@ from torch.utils.data import Dataset, DataLoader
 from . import utils
 from .data import InputData
 
-from scgpt import SubsetsBatchSampler
-from scgpt.model import TransformerModel
-from scgpt.tokenizer import tokenize_and_pad_batch
-from scgpt.tokenizer.gene_tokenizer import GeneVocab
 
-from scgpt.utils import set_seed
 
 from .helpers.custom_logging import log
 
@@ -358,6 +353,7 @@ class scGPT_instance():
         log.info(msg)
 
         # load the vocab
+        from scgpt.tokenizer.gene_tokenizer import GeneVocab
         self.vocab = GeneVocab.from_file(vocab_file)
         for s in self.model_config['special_tokens']: # type: ignore
             if s not in self.vocab:
@@ -368,6 +364,7 @@ class scGPT_instance():
 
     def initialize_model(self) -> None:
         # set seed
+        from scgpt.utils import set_seed
         set_seed(self.run_config['seed'])
         
         # check if vocab is loaded
@@ -386,6 +383,7 @@ class scGPT_instance():
 
         log.debug(f"Use fast transformer? {self.model_config['use_fast_transformer']}")
         # annoyingly this triggers VSCode to show an error
+        from scgpt.model import TransformerModel
         self.model = TransformerModel(
             ntoken = self.model_config['ntokens'],
             d_model = self.model_config['embsize'],
@@ -526,6 +524,7 @@ class scGPT_instance():
                     .tolist()
                 )
                 subsets.append(batch_indices)
+            from scgpt import SubsetsBatchSampler
             data_loader = DataLoader(
                 dataset = dataset,
                 batch_sampler = SubsetsBatchSampler(
@@ -579,6 +578,7 @@ class scGPT_instance():
         msg = "Tokenizing data"
         log.info(msg)
         
+        from scgpt.tokenizer import tokenize_and_pad_batch
         self.tokenized_data = tokenize_and_pad_batch(
             input_data,
             self.gene_ids,
